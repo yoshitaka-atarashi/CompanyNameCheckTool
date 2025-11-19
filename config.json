@@ -1,0 +1,10 @@
+{
+  "default_keywords": [
+    "Hitachi Astemo",
+    "日立Astemo",
+    "日立アステモ"
+  ],
+  "default_replacement": "Astemo",
+  "max_file_size_mb": 50,
+  "allowed_extensions": ["pptx", "ppt"]
+}

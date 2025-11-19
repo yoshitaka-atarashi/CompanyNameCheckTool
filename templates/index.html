@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerPoint キーワード検出・置換ツール</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PowerPoint キーワード検出・置換</h1>
+            <p>ファイルからキーワードを検出・削除・置換します</p>
+        </header>
+
+        <main>
+            <div class="layout-grid">
+                <!-- 左側：ファイルアップロードとキーワード -->
+                <div class="left-panel">
+                    <!-- ファイルアップロード -->
+                    <section class="upload-section">
+                        <h2>ファイル</h2>
+                        <div class="upload-area" id="uploadArea">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p>クリックまたはドラッグ&ドロップ</p>
+                            <input type="file" id="fileInput" accept=".pptx,.ppt" multiple hidden>
+                        </div>
+                        <div id="filesList" class="files-list" style="display: none;">
+                            <ul id="filesUl"></ul>
+                            <button type="button" id="changeFilesBtn" class="btn-small">追加</button>
+                        </div>
+                    </section>
+
+                    <!-- キーワード入力 -->
+                    <section class="keyword-section">
+                        <h2>設定</h2>
+                        <div class="keyword-input">
+                            <label>検出キーワード:</label>
+                            <div class="preset-buttons" id="presetButtons"></div>
+                            <div class="selected-keywords">
+                                <p><small>選択中:</small> <span id="selectedKeywordsList"></span></p>
+                            </div>
+                        </div>
+                        <div class="replacement-input">
+                            <label>置換先:</label>
+                            <input type="text" id="newKeyword" placeholder="置換先テキスト">
+                        </div>
+                    </section>
+
+                    <!-- 操作選択 -->
+                    <div class="action-select">
+                        <label>操作:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="action" value="detect">
+                                <span>検出</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="action" value="delete">
+                                <span>削除</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="action" value="replace" checked>
+                                <span>置換</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：結果とボタン -->
+                <div class="right-panel">
+                    <!-- 結果表示 -->
+                    <section class="results-section" id="resultsSection" style="display: none;">
+                        <div id="resultContent"></div>
+                    </section>
+
+                    <!-- エラー表示 -->
+                    <div id="errorAlert" class="alert alert-error" style="display: none;"></div>
+
+                    <!-- ボタングループ -->
+                    <section class="button-section">
+                        <button type="button" id="detectBtn" class="btn-primary">検出</button>
+                        <button type="button" id="previewBtn" class="btn-secondary" style="display: none;">プレビュー</button>
+                        <button type="button" id="executeBtn" class="btn-success" style="display: none;">実行</button>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ローディング -->
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>処理中...</p>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>Created by Y.Atarashi with Github Copilot</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // サーバーから設定を取得
+        const CONFIG = {
+            default_keywords: {{ default_keywords|tojson }},
+            default_replacement: {{ default_replacement|tojson }}
+        };
+    </script>
+</body>
+</html>
