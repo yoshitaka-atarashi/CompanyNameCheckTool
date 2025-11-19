@@ -252,7 +252,12 @@ def detect_keywords():
         for file in files:
             if file.filename == '':
                 continue
+            # 隠しファイルを除外
+            if file.filename.startswith('.'):
+                print(f"スキップ（隠しファイル）: {file.filename}")
+                continue
             if not allowed_file(file.filename):
+                print(f"スキップ（拡張子不可）: {file.filename}")
                 continue
             
             filename = secure_filename(file.filename)
@@ -260,6 +265,7 @@ def detect_keywords():
             file.save(filepath)
             files_to_cleanup.append(filepath)
             files_to_process.append(filepath)
+            print(f"処理対象に追加: {filename}")
         
         if not files_to_process:
             cleanup_uploads(files_to_cleanup)
@@ -334,7 +340,12 @@ def replace_keywords():
         for file in files:
             if file.filename == '':
                 continue
+            # 隠しファイルを除外
+            if file.filename.startswith('.'):
+                print(f"スキップ（隠しファイル）: {file.filename}")
+                continue
             if not allowed_file(file.filename):
+                print(f"スキップ（拡張子不可）: {file.filename}")
                 continue
             
             filename = secure_filename(file.filename)
@@ -342,6 +353,7 @@ def replace_keywords():
             file.save(filepath)
             files_to_cleanup.append(filepath)
             files_to_process.append(filepath)
+            print(f"処理対象に追加: {filename}")
         
         if not files_to_process:
             cleanup_uploads(files_to_cleanup)
@@ -445,7 +457,12 @@ def preview_results():
         for file in files:
             if file.filename == '':
                 continue
+            # 隠しファイルを除外
+            if file.filename.startswith('.'):
+                print(f"スキップ（隠しファイル）: {file.filename}")
+                continue
             if not allowed_file(file.filename):
+                print(f"スキップ（拡張子不可）: {file.filename}")
                 continue
             
             filename = secure_filename(file.filename)
@@ -453,6 +470,7 @@ def preview_results():
             file.save(filepath)
             files_to_cleanup.append(filepath)
             files_to_process.append(filepath)
+            print(f"処理対象に追加: {filename}")
         
         if not files_to_process:
             cleanup_uploads(files_to_cleanup)

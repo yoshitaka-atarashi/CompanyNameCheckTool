@@ -141,23 +141,39 @@ executeBtn.addEventListener('click', executeChanges);
 function handleFilesSelect(files) {
     if (!files || files.length === 0) return;
 
+    console.log(`受け取ったファイル数（フィルタ前）: ${files.length}`);
+    for (let i = 0; i < files.length; i++) {
+        console.log(`  [${i+1}] ${files[i].name}`);
+    }
+
     const validFiles = [];
     for (let file of files) {
-        if (file.name.endsWith('.pptx') || file.name.endsWith('.ppt')) {
+        const fileName = file.name.toLowerCase();
+        
+        // .gitkeepや隠しファイルを除外
+        if (file.name.startsWith('.')) {
+            console.log(`除外: ${file.name} (隠しファイル)`);
+            continue;
+        }
+        // PPTX/PPT形式のみを対象
+        if (fileName.endsWith('.pptx') || fileName.endsWith('.ppt')) {
             // 重複チェック
             const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
             if (!isDuplicate) {
                 validFiles.push(file);
+                console.log(`追加: ${file.name}`);
             }
         } else {
+            console.log(`除外: ${file.name} (PPTX/PPT以外)`);
             showError(`"${file.name}" はPPTX/PPT形式ではありません`);
         }
     }
 
+    console.log(`有効なファイル数（フィルタ後）: ${validFiles.length}`);
+
     if (validFiles.length > 0) {
         // 既存ファイルに追加（置き換えではなく）
         selectedFiles = selectedFiles.concat(validFiles);
-        console.log('Selected files:', selectedFiles);
         displayFilesList();
         resultsSection.style.display = 'none';
         clearError();
@@ -168,21 +184,36 @@ function handleFilesSelect(files) {
 function handleFolderSelect(files) {
     if (!files || files.length === 0) return;
 
+    console.log(`フォルダから受け取ったファイル数（フィルタ前）: ${files.length}`);
+    for (let i = 0; i < files.length; i++) {
+        console.log(`  [${i+1}] ${files[i].name}`);
+    }
+
     const validFiles = [];
     for (let file of files) {
-        if (file.name.endsWith('.pptx') || file.name.endsWith('.ppt')) {
+        const fileName = file.name.toLowerCase();
+        
+        // .gitkeepや隠しファイルを除外
+        if (file.name.startsWith('.')) {
+            console.log(`除外: ${file.name} (隠しファイル)`);
+            continue;
+        }
+        // PPTX/PPT形式のみを対象
+        if (fileName.endsWith('.pptx') || fileName.endsWith('.ppt')) {
             // 重複チェック
             const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
             if (!isDuplicate) {
                 validFiles.push(file);
+                console.log(`追加: ${file.name}`);
             }
         }
     }
 
+    console.log(`フォルダから有効なファイル数（フィルタ後）: ${validFiles.length}`);
+
     if (validFiles.length > 0) {
         // 既存ファイルに追加
         selectedFiles = selectedFiles.concat(validFiles);
-        console.log('Selected files from folder:', selectedFiles);
         displayFilesList();
         resultsSection.style.display = 'none';
         clearError();
@@ -198,15 +229,16 @@ function displayFilesList() {
         const li = document.createElement('li');
         li.innerHTML = `
             <span class="file-name">${index + 1}. ${file.name}</span>
-            <button type="button" class="remove-file" data-index="${index}" title="削除">×</button>
+            <button type="button" class="remove-file" title="削除">×</button>
         `;
         filesUl.appendChild(li);
 
         // 削除ボタンのイベント
         li.querySelector('.remove-file').addEventListener('click', (e) => {
             e.preventDefault();
-            const idx = parseInt(e.target.getAttribute('data-index'));
-            selectedFiles.splice(idx, 1);
+            // 現在のリスト内のインデックスを取得
+            const currentIndex = Array.from(filesUl.children).indexOf(li);
+            selectedFiles.splice(currentIndex, 1);
             if (selectedFiles.length === 0) {
                 filesList.style.display = 'none';
                 uploadArea.style.display = 'block';
@@ -243,8 +275,8 @@ async function detectKeywords() {
 
         // 全ファイルをまとめて送信
         const formData = new FormData();
-        for (let file of selectedFiles) {
-            formData.append('file', file);
+        for (let i = 0; i < selectedFiles.length; i++) {
+            formData.append('file', selectedFiles[i]);
         }
         formData.append('keywords', JSON.stringify(selectedKeywords));
         formData.append('recursive', recursiveProcessing);
